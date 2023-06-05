@@ -72,14 +72,14 @@ public interface PipelineRel extends RelNode {
     }
 
     /** Script ending in SELECT... */
-    public String query() {
-      return script.query(relNode).sql(OUTPUT_DIALECT);
+    public ScriptImplementor query() {
+      return  script.query(relNode);
     }
 
     /** Script ending in INSERT INTO ... */
-    public String insertInto(HopTable sink) {
+    public ScriptImplementor insertInto(HopTable sink) {
       return script.database(sink.database()).with(sink)
-        .insert(sink.database(), sink.name(), relNode).sql(OUTPUT_DIALECT);
+              .insert(sink.database(), sink.name(), relNode);
     }
 
     /** Add any resources, SQL, DDL etc required to access the table. */
@@ -92,7 +92,7 @@ public interface PipelineRel extends RelNode {
     public Pipeline pipeline(HopTable sink) {
       List<Resource> resourcesAndJob = new ArrayList<>();
       resourcesAndJob.addAll(resources);
-      resourcesAndJob.add(new SqlJob(insertInto(sink)));
+      resourcesAndJob.add(new SqlJob(insertInto(sink).sql()));
       return new Pipeline(resourcesAndJob, rowType());
     }
   }

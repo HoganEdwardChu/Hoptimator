@@ -1,6 +1,7 @@
 package com.linkedin.hoptimator;
 
 import com.linkedin.hoptimator.catalog.RuleProvider;
+import com.linkedin.hoptimator.catalog.ScriptImplementor;
 import com.linkedin.hoptimator.planner.PipelineRel;
 import com.linkedin.hoptimator.planner.HoptimatorHook;
 
@@ -64,7 +65,8 @@ public class LocalFlinkRules implements RuleProvider {
       BlockBuilder builder = new BlockBuilder();
       PhysType physType = PhysTypeImpl.of(implementor.getTypeFactory(), rowType, pref.preferCustom());
       PipelineRel.Implementor impl = new PipelineRel.Implementor(getInput());
-      String sql = impl.query();
+      ScriptImplementor scriptImplementor = impl.query();
+      String sql = scriptImplementor.sql();
       Hook.QUERY_PLAN.run(sql);         // for script validation in tests
       HoptimatorHook.QUERY_PLAN.run(sql);  // ditto
       Expression iter = builder.append("iter", Expressions.new_(FlinkIterable.class, Expressions.constant(sql),

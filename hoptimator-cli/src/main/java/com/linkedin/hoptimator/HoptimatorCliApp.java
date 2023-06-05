@@ -1,5 +1,6 @@
 package com.linkedin.hoptimator;
 
+import com.linkedin.hoptimator.catalog.ScriptImplementor;
 import sqlline.SqlLine;
 import sqlline.CommandHandler;
 import sqlline.DispatchCallback;
@@ -247,7 +248,7 @@ public class HoptimatorCliApp {
         sqlline.output("SQL:");
         HopTable outputTable = new HopTable("PIPELINE", "SINK", plan.getRowType(),
           Collections.singletonMap("connector", "dummy"));
-        sqlline.output(impl.insertInto(outputTable));
+        sqlline.output(impl.insertInto(outputTable).sql());
         dispatchCallback.setToSuccess();
       } catch (Exception e) {
         sqlline.error(e.toString());
@@ -345,7 +346,8 @@ public class HoptimatorCliApp {
         HoptimatorPlanner planner = HoptimatorPlanner.fromModelFile(connectionUrl, new Properties());
         PipelineRel plan = planner.pipeline(query);
         PipelineRel.Implementor impl = new PipelineRel.Implementor(plan);
-        String pipelineSql = impl.query();
+        ScriptImplementor scriptImplementor = impl.query();
+        String pipelineSql = scriptImplementor.sql();
         FlinkIterable iterable = new FlinkIterable(pipelineSql);
         Iterator<String> iter = iterable.<String>field(0, 1).iterator();
         switch(checkType) {
