@@ -1,5 +1,7 @@
 package com.linkedin.hoptimator;
 
+import com.linkedin.hoptimator.catalog.ScriptImplementor;
+import org.apache.calcite.sql.dialect.MysqlSqlDialect;
 import sqlline.SqlLine;
 import sqlline.CommandHandler;
 import sqlline.DispatchCallback;
@@ -17,12 +19,7 @@ import com.linkedin.hoptimator.planner.PipelineRel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.Properties;
+import java.util.*;
 import java.io.IOException;
 
 public class HoptimatorCliApp {
@@ -247,7 +244,7 @@ public class HoptimatorCliApp {
         sqlline.output("SQL:");
         HopTable outputTable = new HopTable("PIPELINE", "SINK", plan.getRowType(),
           Collections.singletonMap("connector", "dummy"));
-        sqlline.output(impl.insertInto(outputTable));
+        sqlline.output(impl.insertInto(outputTable).sql(MysqlSqlDialect.DEFAULT));
         dispatchCallback.setToSuccess();
       } catch (Exception e) {
         sqlline.error(e.toString());
@@ -345,7 +342,8 @@ public class HoptimatorCliApp {
         HoptimatorPlanner planner = HoptimatorPlanner.fromModelFile(connectionUrl, new Properties());
         PipelineRel plan = planner.pipeline(query);
         PipelineRel.Implementor impl = new PipelineRel.Implementor(plan);
-        String pipelineSql = impl.query();
+        ScriptImplementor scriptImplementor = impl.query();
+        String pipelineSql = scriptImplementor.sql();
         FlinkIterable iterable = new FlinkIterable(pipelineSql);
         Iterator<String> iter = iterable.<String>field(0, 1).iterator();
         switch(checkType) {
@@ -454,7 +452,7 @@ public class HoptimatorCliApp {
         PipelineRel plan = planner.pipeline("SELECT " + query);
         PipelineRel.Implementor impl = new PipelineRel.Implementor(plan);
         HopTable sink = planner.database(database).makeTable(table, impl.rowType());
-        String pipelineSql = impl.insertInto(sink) + "\nSELECT 'SUCCESS';";
+        String pipelineSql = impl.insertInto(sink).sql(MysqlSqlDialect.DEFAULT) + "\nSELECT 'SUCCESS';";
         FlinkIterable iterable = new FlinkIterable(pipelineSql);
         Iterator<String> iter = iterable.<String>field(0).iterator();
         if (iter.hasNext()) {
