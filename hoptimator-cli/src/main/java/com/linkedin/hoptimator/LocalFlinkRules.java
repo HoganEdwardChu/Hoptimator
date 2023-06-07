@@ -65,6 +65,7 @@ public class LocalFlinkRules implements RuleProvider {
       BlockBuilder builder = new BlockBuilder();
       PhysType physType = PhysTypeImpl.of(implementor.getTypeFactory(), rowType, pref.preferCustom());
       PipelineRel.Implementor impl = new PipelineRel.Implementor(getInput());
+
       ScriptImplementor scriptImplementor = impl.query();
       String sql = scriptImplementor.sql();
       Hook.QUERY_PLAN.run(sql);         // for script validation in tests

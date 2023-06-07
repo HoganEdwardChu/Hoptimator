@@ -1,6 +1,7 @@
 package com.linkedin.hoptimator;
 
 import com.linkedin.hoptimator.catalog.ScriptImplementor;
+import org.apache.calcite.sql.dialect.MysqlSqlDialect;
 import sqlline.SqlLine;
 import sqlline.CommandHandler;
 import sqlline.DispatchCallback;
@@ -18,12 +19,7 @@ import com.linkedin.hoptimator.planner.PipelineRel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.Properties;
+import java.util.*;
 import java.io.IOException;
 
 public class HoptimatorCliApp {
