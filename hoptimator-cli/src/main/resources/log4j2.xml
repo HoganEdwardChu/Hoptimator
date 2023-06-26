@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <!-- Reduce the verbosity of Flink's logs -->
+        <Logger name="org.apache.flink" level="WARN"/>
+
+        <!-- Reduce the verbosity of other verbose libraries -->
+        <Logger name="org.apache.kafka" level="WARN"/>
+        <Logger name="org.apache.zookeeper" level="WARN"/>
+
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
