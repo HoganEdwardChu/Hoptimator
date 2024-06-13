@@ -20,7 +20,6 @@ dependencies {
   integration project(':hoptimator-flink-adapter')
   integration libs.flinkCsv
   integration libs.flinkConnectorKafka
-  integration libs.slf4jSimple
 
   implementation libs.avro 
   implementation libs.sqlline
@@ -30,6 +29,9 @@ dependencies {
   implementation libs.flinkTablePlanner
   implementation libs.calciteCore
   implementation libs.calciteAvatica
+  implementation libs.log4jApi
+  implementation libs.log4jCore
+  implementation libs.log4jSlf4jImpl
 
   testImplementation libs.junit
   testImplementation libs.assertj
